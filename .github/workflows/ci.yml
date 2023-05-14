@@ -1,0 +1,27 @@
+name: update wallper daily
+run-name: ${{github.actor}} update wallper
+on:
+  schedule:
+    - cron: "5 0 * * *"
+
+jobs:
+  fetchAndWrite:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          token: ${{secrets.GIT_ACTION_TOKEN}}
+      - uses: actions/setup-node@v3
+        with:
+          node-version: "18"
+      - name: install
+        run: npm install
+      - name: build&write
+        run: npm start
+      - name: Commit and push
+        run: |
+          git config --global user.name 'lostyu'
+          git config --global user.email 'lostyu789@163.com'
+          git add .
+          git commit -am "README file write"
+          git push
