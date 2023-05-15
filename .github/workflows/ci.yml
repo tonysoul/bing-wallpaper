@@ -2,7 +2,7 @@ name: update wallper daily
 run-name: ${{github.actor}} update wallper
 on:
   schedule:
-    - cron: "5 3 * * *"
+    - cron: "5 4 * * *"
 
 jobs:
   fetchAndWrite:
@@ -23,7 +23,7 @@ jobs:
           git config --global user.name 'tonysoul'
           git config --global user.email 'tonysoul@foxmail.com'
           git add picture/*
-          git add README.md
           git add wallper.json
-          git commit -am "README file write"
+          git add README.md
+          git commit -am "update README"
           git push
