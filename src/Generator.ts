@@ -4,7 +4,7 @@ import path from "path";
 import { checkAndCreateDir, dateFormat } from "./utils";
 import moment from "moment";
 
-interface Wallper {
+interface Wallpaper {
   host: string;
   thumbil: string;
   enddate: string;
@@ -18,7 +18,7 @@ interface Wallper {
 
 // 数据库json的数据类型
 interface DataStructrue {
-  [key: string]: Wallper;
+  [key: string]: Wallpaper;
 }
 
 interface MonthData {
@@ -32,9 +32,9 @@ interface MonthData {
 
 export class MyGenerator {
   private baseApiUrl = `https://cn.bing.com/HPImageArchive.aspx?format=js&idx=0&n=1&mkt=zh-CN&uhd=1`;
-  // private baseApiUrl = `http://localhost:3001/wallpers`;
+  // private baseApiUrl = `http://localhost:3001/wallpapers`;
   private baseBingUrl = "https://cn.bing.com";
-  private databaseName = "wallper.json";
+  private databaseName = "wallpaper.json";
 
   constructor() {
     this.init();
@@ -56,7 +56,7 @@ export class MyGenerator {
   // 1 获取数据
   private async fetchData() {
     const res = await axios.get(this.baseApiUrl);
-    const wallperArr: Wallper[] = [];
+    const wallpaperArr: Wallpaper[] = [];
     res.data.images.forEach((item: any) => {
       const { enddate, url, urlbase, copyright, copyrightlink, title } = item;
 
@@ -64,7 +64,7 @@ export class MyGenerator {
         .replace("&w=1920", "&w=3840")
         .replace("&h=1080", "&h=2160");
 
-      const wallper: Wallper = {
+      const wallpaper: Wallpaper = {
         host: this.baseBingUrl,
         thumbil: urlbase + "_UHD.jpg&w=1000",
         enddate,
@@ -76,14 +76,14 @@ export class MyGenerator {
         "4k": four_k,
       };
 
-      wallperArr.push(wallper);
+      wallpaperArr.push(wallpaper);
     });
 
-    return wallperArr;
+    return wallpaperArr;
   }
 
   // 2 写入所有数据到一个json
-  private writeToJson(data: Wallper) {
+  private writeToJson(data: Wallpaper) {
     let fileContent: DataStructrue = {};
     const fileName = path.resolve(process.cwd(), this.databaseName);
     if (fs.existsSync(fileName)) {
@@ -96,7 +96,7 @@ export class MyGenerator {
   // 3 把json数据，按照月份写入到相应文件
   private storeData() {
     try {
-      const data = this.readWallper();
+      const data = this.readWallpaper();
       const { dateKey, monthData } = this.groupByMonth(data);
 
       this.writeMonthData(dateKey, monthData);
@@ -134,7 +134,7 @@ export class MyGenerator {
     };
   }
 
-  private readWallper() {
+  private readWallpaper() {
     const obj: DataStructrue = JSON.parse(
       fs.readFileSync(path.resolve(process.cwd(), this.databaseName), "utf-8")
     );
@@ -175,14 +175,14 @@ export class MyGenerator {
     }
 
     fileContent = fileContent.replace("@table", tbody);
-    // 写入当前月的wallper到指定月份文件夹内 picture
+    // 写入当前月的wallpaper到指定月份文件夹内 picture
     fs.writeFileSync(fileName, fileContent);
-    // 写入当前月的wallper到根目录README.md
+    // 写入当前月的wallpaper到根目录README.md
     // TODO
     // 1. 在根目录下写入归档导航
     // ### 历史导航
     // [2023-05](/picture/2023-05/) | [2023-04](/picture/2023-04/)
-    // 2. 根目录下返回最近30天的wallper
+    // 2. 根目录下返回最近30天的wallpaper
     fs.writeFileSync(path.resolve(process.cwd(), "README.md"), fileContent);
   }
 }
