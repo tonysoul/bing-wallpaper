@@ -22,6 +22,8 @@ jobs:
         run: |
           git config --global user.name 'tonysoul'
           git config --global user.email 'tonysoul@foxmail.com'
-          git add .
+          git add picture/*
+          git add README.md
+          git add wallper.json
           git commit -am "README file write"
           git push
