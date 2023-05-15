@@ -2,7 +2,7 @@ name: update wallper daily
 run-name: ${{github.actor}} update wallper
 on:
   schedule:
-    - cron: "5 4 * * *"
+    - cron: "6 4 * * *"
 
 jobs:
   fetchAndWrite:
